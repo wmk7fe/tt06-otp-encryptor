@@ -12,7 +12,7 @@ module tt_um_otp_encryptor (
 wire [7:0] data;
 wire [7:0] pad_gen;
 wire [2:0] r_num;
-reg[2:0] count = 3'h0;
+reg[2:0] count;
 wire decrypt;
 
 reg [7:0] out;
@@ -44,7 +44,7 @@ LFSR_PRNG rng(
 	 
 always @ (posedge clk, posedge(~rst_n)) begin
 	if (~rst_n) begin
-		count = 3'h0;
+		count <= 3'h0;
 		out <= 8'h00;
 		index_out <= 3'h0;
 		
