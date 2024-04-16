@@ -13,7 +13,7 @@ wire [7:0] data;
 wire [7:0] pad_read;
 wire [7:0] pad_gen;
 wire [2:0] r_num;
-reg[2:0] count = 4'd0;
+reg[2:0] count = 3'h0;
 wire decrypt;
 
 reg [7:0] out;
@@ -30,17 +30,31 @@ assign uio_out[6:4] = index_out[2:0];
 assign uio_out[7] = 1'b0;
 
 assign uio_oe = 8'b11110000;
-	assign uio_out[3:0] = uio_in[3:0]; // is this allowed?
+assign uio_out[3:0] = uio_in[3:0];
 
+wire reset, we;
+wire [2:0] a1, wa;
+wire [7:0] wd;
+reg [7:0] rd1;
+	
+reg[7:0] mem[0:7];
 
-register_file rf (
-.reset(~rst_n),
-.clock(clk),
-.we(ena & ~decrypt),
-.a1(r_num),
-.wd(pad_gen),
-.wa(count),
-.rd1(pad_read));
+assign we = ena & ~decrypt;
+assign reset = ~rst_n;
+assign wa = count;
+assign wd = pad_gen;
+
+integer i;
+always @ (posedge clk, posedge reset) begin
+	if (reset) begin
+		for(i = 0; i < 8; i = i + 1) begin
+			mem[i] <= 8'h00;
+		end
+	end
+	else if (we) begin
+		mem[wa] <= wd;
+	end
+end
 
 
 LFSR_PRNG rng(
@@ -52,22 +66,22 @@ LFSR_PRNG rng(
 	 
 always @ (posedge clk) begin
 	if (~rst_n) begin
-		count <= 4'd0;
+		count = 3'h0;
 		out <= 8'h00;
-		index_out <= 3'h00;
+		index_out <= 3'h0;
 	end
 	else if (ena) begin
 		if (decrypt) begin
 			index_out <= 3'h0;
-			out <= pad_read ^ data;
+			out <= mem[r_num] ^ data;
 		end
 		else begin // encrypt
 			index_out <= count;
 			if(count == 3'b111) begin
-				count <= 3'b000;
+				count = 3'b000;
 			end
 			else begin
-				count <= count + 4'd1;
+				count = count + 3'h1;
 			end
 			out <= pad_gen ^ data;
 		end
