@@ -76,7 +76,6 @@ always @ (posedge clk) begin
 			out <= mem[r_num] ^ data;
 		end
 		else begin // encrypt
-			index_out <= count;
 			if(count == 3'b111) begin
 				count = 3'b000;
 			end
@@ -84,6 +83,7 @@ always @ (posedge clk) begin
 				count = count + 3'h1;
 			end
 			out <= pad_gen ^ data;
+			index_out <= count;
 		end
 	end
 	else out <= 8'h00;
