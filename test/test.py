@@ -96,8 +96,8 @@ async def test_project(dut):
     dut._log.info("Decrypt stored ciphertexts associated with each register")
 
     dut._log.info("\t1st Register")
-    data_in.value = ct0
-    rnum_decrypt_in.value = (r0 << 1) + 1
+    data_in.value = ct2
+    rnum_decrypt_in.value = (r2 << 1) + 1
     await clock_rise(clk)
     await clock_fall(clk)
     await clock_rise(clk)
@@ -118,8 +118,8 @@ async def test_project(dut):
     # assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r1)"
 
     dut._log.info("\t3rd Register")
-    data_in.value = ct2
-    rnum_decrypt_in.value = (r2 << 1) + 1
+    data_in.value = ct0
+    rnum_decrypt_in.value = (r0 << 1) + 1
     await clock_rise(clk)
     await clock_fall(clk)
     await print_io(dut)
