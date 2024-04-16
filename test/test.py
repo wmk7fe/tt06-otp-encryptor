@@ -3,7 +3,7 @@
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
+from cocotb.triggers import ClockCycles, Timer
 
 async def uio_in(rnum, decrypt):
     return 0xF & ((rnum << 1) + decrypt)
