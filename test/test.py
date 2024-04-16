@@ -29,6 +29,16 @@ async def print_io(dut):
     rst_n = dut.rst_n
     dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tout: {data_out.value}\n\trnum_out: {(dut.uio_out.value >> 4) & 0x7}\n')
 
+async def print_io_safe(dut):
+    clk = dut.clk
+    ena = dut.ena
+    data_in = dut.ui_in
+    data_out = dut.uo_out
+    rnum_decrypt_in = dut.uio_in
+    rnum_out = dut.uio_out
+    rst_n = dut.rst_n
+    dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tout: {data_out.value}\n\truio_out: {dut.uio_out.value}\n')
+
 @cocotb.test()
 async def test_project(dut):
     clk = dut.clk
@@ -56,7 +66,7 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     rst_n.value = 1
-    await print_io(dut)
+    await print_io_safe(dut)
 
   
 
