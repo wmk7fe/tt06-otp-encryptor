@@ -62,12 +62,11 @@ always @ (posedge clk) begin
 			out <= pad_read ^ data;
 		end
 		else begin // encrypt
+			index_out <= count;
 			if(count == 3'b111) begin
-				index_out = count;
 				count <= 3'b000;
 			end
 			else begin
-				index_out <= count;
 				count <= count + 4'd1;
 			end
 			out <= pad_gen ^ data;
