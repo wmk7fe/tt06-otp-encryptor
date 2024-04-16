@@ -41,7 +41,7 @@ integer i;
 
 LFSR_PRNG rng(
     .clk(clk),
-    .rst(~rst_n),
+    .rst(reset),
     .prn(pad_gen));
 
 //assign out = ena ? (decrypt ? (pad_read ^ data) : (pad_gen ^ data)) : 8'h00;
