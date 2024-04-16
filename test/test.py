@@ -66,6 +66,7 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     rst_n.value = 1
+    ena.value = 1
     dut._log.info(f'out: {data_out.value}\n\tuio_out: {dut.uio_out.value}\n')
 
     # Encrypt
@@ -73,12 +74,10 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
 
-    ena.value = 1
     data_in.value = 0xab
     rnum_decrypt_in.value = 0x00
 
     await clock_rise(clk)
-    # await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     ct0 = data_out.value
