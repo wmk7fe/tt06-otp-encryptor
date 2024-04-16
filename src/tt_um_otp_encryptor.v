@@ -16,6 +16,7 @@ wire [7:0] pad_gen;
 wire [2:0] r_num;
 reg[2:0] count;
 wire decrypt;
+wire reset;
 
 reg [7:0] out;
 reg [2:0] index_out;
@@ -25,6 +26,7 @@ reg [2:0] index_out;
 assign data = ui_in[7:0];
 assign decrypt = uio_in[0];
 assign r_num = uio_in[3:1];
+assign reset = ~rst_n;
 
 assign uo_out[7:0] = out[7:0];
 assign uio_out[6:4] = index_out[2:0];
@@ -44,8 +46,8 @@ LFSR_PRNG rng(
 
 //assign out = ena ? (decrypt ? (pad_read ^ data) : (pad_gen ^ data)) : 8'h00;
 	 
-always @ (posedge clk, posedge(~rst_n)) begin
-	if (~rst_n) begin
+always @ (posedge clk, posedge reset) begin
+	if (reset) begin
 		count <= 3'h0;
 		out <= 8'h00;
 		index_out <= 3'h0;
