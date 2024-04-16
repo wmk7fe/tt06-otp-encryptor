@@ -3,7 +3,7 @@ module tt_um_otp_encryptor (
     output [7:0] uo_out,   // Dedicated outputs
 /* verilator lint_off UNUSEDSIGNAL */
     input  [7:0] uio_in,   // IOs: Input path
-/* verilator lint_on */
+/* verilator lint_on UNUSEDSIGNAL */
     output [7:0] uio_out,  // IOs: Output path
     output [7:0] uio_oe,
     input        ena,      // will go high when the design is enabled
