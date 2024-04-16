@@ -13,11 +13,11 @@ async def rnum(uio_out):
 
 async def clock_rise(clk):
     clk.value = 1
-    await Timer(1, units='ms')
+    await Timer(20, units='us')
 
 async def clock_fall(clk):
     clk.value = 0
-    await Timer(1, units='ms')
+    await Timer(20, units='us')
 
 async def print_io(dut):
     clk = dut.clk
