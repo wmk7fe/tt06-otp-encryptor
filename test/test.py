@@ -68,6 +68,20 @@ async def test_project(dut):
     rst_n.value = 1
     await print_io(dut)
 
+    # Encrypt
+    dut._log.info("Encrypt 0xab")
+    await clock_rise(clk)
+    await clock_fall(clk)
+
+    ena.value = 1
+    data_in.value = 0xab
+    rnum_decrypt_in.value = 0x00
+
+    await clock_rise(clk)
+    await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+
   
 
   
