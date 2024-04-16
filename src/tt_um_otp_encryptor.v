@@ -52,23 +52,23 @@ LFSR_PRNG rng(
 	 
 always @ (posedge clk) begin
 	if (~rst_n) begin
-		count = 4'd0;
+		count <= 4'd0;
 		out <= 8'h00;
 		index_out <= 3'h00;
 	end
 	else if (ena) begin
 		if (decrypt) begin
-			index_out = 3'h0;
+			index_out <= 3'h0;
 			out <= pad_read ^ data;
 		end
 		else begin // encrypt
 			if(count == 3'b111) begin
 				index_out = count;
-				count = 3'b000;
+				count <= 3'b000;
 			end
 			else begin
-				index_out = count;
-				count = count + 4'd1;
+				index_out <= count;
+				count <= count + 4'd1;
 			end
 			out <= pad_gen ^ data;
 		end
