@@ -13,11 +13,11 @@ async def rnum(uio_out):
 
 async def clock_rise(clk):
     clk.value = 1
-    await Timer(10, units='ns')
+    await Timer(1, units='ms')
 
 async def clock_fall(clk):
     clk.value = 0
-    await Timer(10, units='ns')
+    await Timer(1, units='ms')
 
 async def print_io(dut):
     clk = dut.clk
@@ -28,16 +28,6 @@ async def print_io(dut):
     rnum_out = dut.uio_out
     rst_n = dut.rst_n
     dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tin: {data_in.value}\n\tout: {data_out.value}\n\trnum_out: {(dut.uio_out.value >> 4) & 0x7}\n')
-
-# async def print_io_safe(dut):
-#     clk = dut.clk
-#     ena = dut.ena
-#     data_in = dut.ui_in
-#     data_out = dut.uo_out
-#     rnum_decrypt_in = dut.uio_in
-#     rnum_out = dut.uio_out
-#     rst_n = dut.rst_n
-#     dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tout: {data_out.value}\n\truio_out: {dut.uio_out.value}\n')
 
 @cocotb.test()
 async def test_project(dut):
@@ -79,11 +69,6 @@ async def test_project(dut):
 
     dut._log.info("\t1st Register")
     await clock_rise(clk)
-    await print_io(dut)
-    await clock_fall(clk)
-    await print_io(dut)
-    await clock_rise(clk)
-    await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     ct0 = data_out.value
@@ -92,7 +77,6 @@ async def test_project(dut):
 
     dut._log.info("\t2nd Register")
     await clock_rise(clk)
-    await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     ct1 = data_out.value
@@ -101,20 +85,18 @@ async def test_project(dut):
 
     dut._log.info("\t3rd Register")
     await clock_rise(clk)
-    await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     ct2 = data_out.value
     r2 = (dut.uio_out.value >> 4) & 0x7
     assert ct2 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
-    dut._log.info("Decrypt stored ciphertexts associated with r0, r1, r2")
+    dut._log.info("Decrypt stored ciphertexts associated with each register")
 
     dut._log.info("\t1st Register")
     data_in.value = ct0
     rnum_decrypt_in.value = (r0 << 1) + 1
     await clock_rise(clk)
-    await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     await print_io(dut)
@@ -124,7 +106,6 @@ async def test_project(dut):
     data_in.value = ct1
     rnum_decrypt_in.value = (r1 << 1) + 1
     await clock_rise(clk)
-    await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     # assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r1)"
@@ -133,7 +114,6 @@ async def test_project(dut):
     data_in.value = ct2
     rnum_decrypt_in.value = (r2 << 1) + 1
     await clock_rise(clk)
-    await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     # assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r2)"
