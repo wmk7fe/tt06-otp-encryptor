@@ -10,7 +10,6 @@ module tt_um_otp_encryptor (
         );
 
 wire [7:0] data;
-wire [7:0] pad_read;
 wire [7:0] pad_gen;
 wire [2:0] r_num;
 reg[2:0] count = 3'h0;
@@ -61,10 +60,10 @@ always @ (posedge clk, posedge(~rst_n)) begin
 		end
 		else begin // encrypt
 			if(count == 3'b111) begin
-				count = 3'b000;
+				count <= 3'b000;
 			end
 			else begin
-				count = count + 3'h1;
+				count <= count + 3'h1;
 			end
 			out <= pad_gen ^ data;
 			mem[count] <= pad_gen;
