@@ -27,7 +27,7 @@ async def print_io(dut):
     rnum_decrypt_in = dut.uio_in
     rnum_out = dut.uio_out
     rst_n = dut.rst_n
-    dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tout: {data_out.value}\n\trnum_out: {(dut.uio_out.value >> 4) & 0x7}\n')
+    dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tin: {data_in.value}\n\tout: {data_out.value}\n\trnum_out: {(dut.uio_out.value >> 4) & 0x7}\n')
 
 # async def print_io_safe(dut):
 #     clk = dut.clk
