@@ -66,7 +66,7 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     rst_n.value = 1
-    await print_io(dut)
+    dut._log.info(f'out: {data_out.value}\n\tuio_out: {dut.uio_out.value}\n')
 
     # Encrypt
     dut._log.info("Encrypt 0xab - store to r1, r2, r3")
@@ -82,16 +82,19 @@ async def test_project(dut):
     await clock_fall(clk)
     await print_io(dut)
     ct1 = data_out.value
+    assert ct1 != 0xab, f"Encryption failed: Plaintext Unmodified"
     await clock_rise(clk)
     # await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     ct2 = data_out.value
+    assert ct2 != 0xab, f"Encryption failed: Plaintext Unmodified"
     await clock_rise(clk)
     # await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
     ct3 = data_out.value
+    assert ct3 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     dut._log.info("Decrypt stored ciphertexts associated with r1, r2, r3")
 
@@ -101,9 +104,8 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     await print_io(dut)
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
+    assert data_out.value == 0xab
+    assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r1)"
 
     dut._log.info("r2")
     data_in.value = ct2
@@ -111,9 +113,8 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     await print_io(dut)
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
+    assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r2)"
+
 
     dut._log.info("r3")
     data_in.value = ct3
@@ -121,43 +122,4 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     await print_io(dut)
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
-
-    dut._log.info("Output pads at r0, r1, r2, r3")
-
-    dut._log.info("r0")
-    data_in.value = 0
-    rnum_decrypt_in.value = 0b00000001
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
-
-    dut._log.info("r1")
-    data_in.value = 0
-    rnum_decrypt_in.value = 0b00000011
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
-
-    dut._log.info("r2")
-    data_in.value = 0
-    rnum_decrypt_in.value = 0b00000101
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
-
-    dut._log.info("r3")
-    data_in.value = 0
-    rnum_decrypt_in.value = 0b00000111
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await print_io(dut)
-
-  
-
-  
+    assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r3)"  
