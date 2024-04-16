@@ -56,7 +56,6 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     rst_n.value = 1
-    ena.value = 1
     dut._log.info(f'out: {data_out.value}\n\tuio_out: {dut.uio_out.value}\n')
 
     # Encrypt
@@ -66,6 +65,7 @@ async def test_project(dut):
 
     data_in.value = 0xab
     rnum_decrypt_in.value = 0x00
+    ena.value = 1
 
     dut._log.info("\t1st Register")
     await clock_rise(clk)
@@ -98,6 +98,11 @@ async def test_project(dut):
     rnum_decrypt_in.value = (r0 << 1) + 1
     await clock_rise(clk)
     await clock_fall(clk)
+    await clock_rise(clk)
+    await clock_fall(clk)
+    await clock_rise(clk)
+    await clock_fall(clk)
+    
     await print_io(dut)
     await print_io(dut)
     # assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r0)"
