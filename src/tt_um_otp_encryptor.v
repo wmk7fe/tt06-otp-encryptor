@@ -32,27 +32,12 @@ assign uio_out[7] = 1'b0;
 assign uio_oe = 8'b11110000;
 assign uio_out[3:0] = uio_in[3:0];
 
-wire reset, we;
-wire [2:0] a1, wa;
-wire [7:0] wd;
-reg [7:0] rd1;
-	
+// registers	
 reg[7:0] mem[0:7];
-
-assign we = ena & ~decrypt;
-assign reset = ~rst_n;
-assign wa = count;
-assign wd = pad_gen;
-
 integer i;
-always @ (posedge clk, posedge reset) begin
-	if (reset) begin
-		for(i = 0; i < 8; i = i + 1) begin
-			mem[i] <= 8'h00;
-		end
-	end
-	else if (we) begin
-		mem[wa] <= wd;
+always @ (posedge (~rst_n)) begin
+	for(i = 0; i < 8; i = i + 1) begin
+		mem[i] <= 8'h00;
 	end
 end
 
@@ -76,7 +61,6 @@ always @ (posedge clk) begin
 			out <= mem[r_num] ^ data;
 		end
 		else begin // encrypt
-			index_out <= count + 1;
 			if(count == 3'b111) begin
 				count = 3'b000;
 			end
@@ -84,6 +68,8 @@ always @ (posedge clk) begin
 				count = count + 3'h1;
 			end
 			out <= pad_gen ^ data;
+			mem[count] <= pad_gen;
+			index_out <= count;
 		end
 	end
 	else out <= 8'h00;
