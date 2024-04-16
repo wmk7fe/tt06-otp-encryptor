@@ -5,6 +5,30 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 
+async def uio_in(rnum, decrypt):
+    return 0xF & ((rnum << 1) + decrypt)
+
+async def rnum(uio_out):
+    return 0x7 & (uio_out >> 4)
+
+async def clock_rise(clk):
+    clk.value = 1
+    await Timer(10, units='ns')
+
+async def clock_fall(clk):
+    clk.value = 0
+    await Timer(10, units='ns')
+
+async def print_io(dut)
+    clk = dut.clk
+    ena = dut.ena
+    data_in = dut.ui_in
+    data_out = dut.uo_out
+    rnum_decrypt_in = dut.uio_in
+    rnum_out = dut.uio_out
+    rst_n = dut.rst_n
+    dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tout: {data_out.value}\n\trnum_out: {(dut.uio_out.value >> 4) & 0x7}\n')
+
 @cocotb.test()
 async def test_project(dut):
     clk = dut.clk
@@ -14,44 +38,25 @@ async def test_project(dut):
     rnum_decrypt_in = dut.uio_in
     rnum_out = dut.uio_out
     rst_n = dut.rst_n
+    
   
     dut._log.info("Start")
-      
-    # Our example module doesn't use clock and reset, but we show how to use them here anyway.
-    clock = Clock(dut.clk, 10, units="us")
-    cocotb.start_soon(clock.start())
-    
     # Reset
     dut._log.info("Reset")
-    dut.ena.value = 0
-    dut.ui_in.value = 0
-    dut.uio_in.value = 0
-    dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
-    dut.rst_n.value = 1
-    
-    # Set the input values, wait one clock cycle, and check the output
-    dut._log.info("Test Encryption")
-    dut.ena.value = 1
-    dut.ui_in.value = 0xab
-    dut.uio_in.value = 0b00000000
-    
-    await ClockCycles(dut.clk, 1)
-    
-    dut._log.info(f'Encrypted output: {data_out.value} (0)')
-    data = data_out.value
-    
-    await ClockCycles(dut.clk, 3)
-    
-    dut._log.info("Test Decryption")
-    dut.ena.value = 1
-    dut.ui_in.value = data
-    dut.uio_in.value = 0b00000001
-    
-    await ClockCycles(dut.clk, 1)
-    
-    dut._log.info(f'Encrypted output: {data_out.value} ({rnum_out.value >> 4})')
-    data = data_out.value
+    await clock_rise(clk)
+    await clock_fall(clk)
+    await clock_rise(clk)
+    ena.value = 0
+    rst_n.value = 1
+    data_in.value = 0
+    rnum_decrypt_in.value = 0
+    await clock_rise(clk)
+    await clock_fall(clk)
+    rst_n.value = 0
+    await clock_rise(clk)
+    await clock_fall(clk)
+    rst_n.value = 1
+    await print_io(dut)
 
   
 
