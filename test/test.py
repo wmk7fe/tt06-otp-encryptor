@@ -69,7 +69,7 @@ async def test_project(dut):
     dut._log.info(f'out: {data_out.value}\n\tuio_out: {dut.uio_out.value}\n')
 
     # Encrypt
-    dut._log.info("Encrypt 0xab - store to r0, r1, r2")
+    dut._log.info("Encrypt 0xab - store to three different registers")
     await clock_rise(clk)
     await clock_fall(clk)
 
@@ -82,6 +82,7 @@ async def test_project(dut):
     await clock_fall(clk)
     await print_io(dut)
     ct0 = data_out.value
+    r0 = (dut.uio_out.value >> 4) & 0x7
     assert ct0 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     await clock_rise(clk)
@@ -89,6 +90,7 @@ async def test_project(dut):
     await clock_fall(clk)
     await print_io(dut)
     ct1 = data_out.value
+    r1 = (dut.uio_out.value >> 4) & 0x7
     assert ct1 != 0xab, f"Encryption failed: Plaintext Unmodified"
     
     await clock_rise(clk)
@@ -96,13 +98,14 @@ async def test_project(dut):
     await clock_fall(clk)
     await print_io(dut)
     ct2 = data_out.value
+    r2 = (dut.uio_out.value >> 4) & 0x7
     assert ct2 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     dut._log.info("Decrypt stored ciphertexts associated with r0, r1, r2")
 
     dut._log.info("r0")
     data_in.value = ct0
-    rnum_decrypt_in.value = 0b00000001
+    rnum_decrypt_in.value = (r0 << 1) + 1
     await clock_rise(clk)
     await clock_fall(clk)
     await print_io(dut)
@@ -111,7 +114,7 @@ async def test_project(dut):
 
     dut._log.info("r1")
     data_in.value = ct1
-    rnum_decrypt_in.value = 0b00000011
+    rnum_decrypt_in.value = (r1 << 1) + 1
     await clock_rise(clk)
     await clock_fall(clk)
     await print_io(dut)
@@ -120,7 +123,7 @@ async def test_project(dut):
 
     dut._log.info("r2")
     data_in.value = ct2
-    rnum_decrypt_in.value = 0b00000101
+    rnum_decrypt_in.value = (r2 << 1) + 1
     await clock_rise(clk)
     await clock_fall(clk)
     await print_io(dut)
