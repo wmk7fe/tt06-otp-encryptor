@@ -29,8 +29,6 @@ assign uo_out[7:0] = out[7:0];
 assign uio_out[6:4] = index_out[2:0];
 assign uio_out[7] = 1'b0;
 
-assign uio_out[3:0] = uio_in[7:4];
-
 assign uio_oe = 8'b11110000;
 
 
@@ -55,6 +53,7 @@ always @ (posedge clk) begin
 	if (~rst_n) begin
 		count = 4'd0;
 		out <= 8'h00;
+		index_out <= 3'h00;
 	end
 	else if (ena) begin
 		if (decrypt) begin
