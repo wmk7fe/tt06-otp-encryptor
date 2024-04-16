@@ -1,4 +1,4 @@
-module tt_um_opt_encryptor (    
+module tt_um_otp_encryptor (    
     input  [7:0] ui_in,    // Dedicated inputs
     output [7:0] uo_out,   // Dedicated outputs
     input  [7:0] uio_in,   // IOs: Input path
