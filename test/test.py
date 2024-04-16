@@ -19,7 +19,7 @@ async def clock_fall(clk):
     clk.value = 0
     await Timer(10, units='ns')
 
-async def print_io(dut)
+async def print_io(dut):
     clk = dut.clk
     ena = dut.ena
     data_in = dut.ui_in
