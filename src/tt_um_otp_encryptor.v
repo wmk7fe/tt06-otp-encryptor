@@ -35,12 +35,6 @@ assign uio_out[3:0] = uio_in[3:0];
 // registers	
 reg[7:0] mem[0:7];
 integer i;
-always @ (posedge (~rst_n)) begin
-	for(i = 0; i < 8; i = i + 1) begin
-		mem[i] <= 8'h00;
-	end
-end
-
 
 LFSR_PRNG rng(
     .clk(clk),
@@ -49,11 +43,16 @@ LFSR_PRNG rng(
 
 //assign out = ena ? (decrypt ? (pad_read ^ data) : (pad_gen ^ data)) : 8'h00;
 	 
-always @ (posedge clk) begin
+always @ (posedge clk, posedge(~rst_n)) begin
 	if (~rst_n) begin
 		count = 3'h0;
 		out <= 8'h00;
 		index_out <= 3'h0;
+		
+		for(i = 0; i < 8; i = i + 1) begin
+			mem[i] <= 8'h00;
+		end
+		
 	end
 	else if (ena) begin
 		if (decrypt) begin
