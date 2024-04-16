@@ -69,7 +69,7 @@ async def test_project(dut):
     await print_io(dut)
 
     # Encrypt
-    dut._log.info("Encrypt 0xab")
+    dut._log.info("Encrypt 0xab - store to r0, r1, r2")
     await clock_rise(clk)
     await clock_fall(clk)
 
@@ -78,9 +78,50 @@ async def test_project(dut):
     rnum_decrypt_in.value = 0x00
 
     await clock_rise(clk)
+    # await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+    ct0 = data_out.value
+    await clock_rise(clk)
+    # await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+    ct1 = data_out.value
+    await clock_rise(clk)
+    # await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+    ct2 = data_out.value
+
+    dut._log.info("Decrypt stored ciphertexts associated with r0, r1, r2")
+
+    dut._log.info("r0")
+    data_in.value = ct0
+    rnum_decrypt_in.value = 0b00000001
+    await clock_rise(clk)
     await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
+    await clock_rise(clk)
+    await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+
+    dut._log.info("r1")
+    data_in.value = ct1
+    rnum_decrypt_in.value = 0b00000011
+    await clock_rise(clk)
+    await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+    await clock_rise(clk)
+    await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+
+    dut._log.info("r2")
+    data_in.value = ct2
+    rnum_decrypt_in.value = 0b00000101
     await clock_rise(clk)
     await print_io(dut)
     await clock_fall(clk)
