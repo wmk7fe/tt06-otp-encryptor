@@ -30,6 +30,7 @@ assign uio_out[6:4] = index_out[2:0];
 assign uio_out[7] = 1'b0;
 
 assign uio_oe = 8'b11110000;
+	assign uio_out[3:0] = uio_in[3:0]; // is this allowed?
 
 
 register_file rf (
