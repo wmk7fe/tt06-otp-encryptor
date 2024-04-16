@@ -81,6 +81,14 @@ async def test_project(dut):
     await print_io(dut)
     await clock_fall(clk)
     await print_io(dut)
+    await clock_rise(clk)
+    await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
+    await clock_rise(clk)
+    await print_io(dut)
+    await clock_fall(clk)
+    await print_io(dut)
 
   
 
