@@ -56,16 +56,18 @@ async def test_project(dut):
     await clock_rise(clk)
     await clock_fall(clk)
     rst_n.value = 1
+    ena.value = 1
     dut._log.info(f'out: {data_out.value}\n\tuio_out: {dut.uio_out.value}\n')
 
     # Encrypt
     dut._log.info("Encrypt 0xab - store to three different registers")
     await clock_rise(clk)
     await clock_fall(clk)
+    await clock_rise(clk)
+    await clock_fall(clk)
 
     data_in.value = 0xab
     rnum_decrypt_in.value = 0x00
-    ena.value = 1
 
     dut._log.info("\t1st Register")
     await clock_rise(clk)
