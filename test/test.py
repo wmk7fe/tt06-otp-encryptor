@@ -38,9 +38,8 @@ async def test_project(dut):
     
     await ClockCycles(dut.clk, 1)
     
-    dut._log.info(f'Encrypted output: {data_out.value} ({rnum_out.value >> 4})')
+    dut._log.info(f'Encrypted output: {data_out.value} (0)')
     data = data_out.value
-    rnum = rnum_out.value >> 4
     
     await ClockCycles(dut.clk, 3)
     
