@@ -2,40 +2,16 @@
 
 # Tiny Tapeout Verilog Project Template
 
-- [Read the documentation for project](docs/info.md)
+- This is the one time pad encryptor submission for the Tiny Tapeout 06 Shuttle. The top level file is in src/tt_um_otp_encryptor.v, which includes a module from the file LFSR_PRNG.v in the design. Testing of this design is performed from the file test/test.py with encryptions and decryptions of different values as well as encryptions and decryptions of pads stored in different registers. More information on how the logic works and how to test is shown below.
 
-## What is Tiny Tapeout?
+## How it works
 
-TinyTapeout is an educational project that aims to make it easier and cheaper than ever to get your digital designs manufactured on a real chip.
+8 bit data inputs come through ui_in in the form of either plaintext or ciphertext. Bit 0 of uio_in is used to determine whether the chip will perform encryption or decryption. When it is high, decryption will be performed. When it is low, decryption will be performed. However, the enable signal must be high in both cases for either encryption or decryption to be performed. In the case of encryption, the chip will take an 8 bit value from an internal pseudorandom number generator to use as a one time pad. To create the ciphertext, the chip will xor the bits of the one time pad with their relative bits in the plaintext to create ciphertext. In order to later recover the plaintext, the one time pad is stored in an internal register file, and the index of the register of which the pad is stored in is outputed to bits 6 through 4 of uio_out. There are 8 registers in the register file (0-7). To decrypt ciphertext, the decrypt signal must be high (bit 0 of uio_in) and the index that the associated one time pad is stored in must be inputted to uio_in bits 3 through 1. Then, the one time pad will be recovered from the indexed register, the pad will be xored with the ciphertext, and the plaintext will be produced as output.
 
-To learn more and get started, visit https://tinytapeout.com.
+## How to test
 
-## Verilog Projects
+Testing can be performed by ensuring that inputted plaintext can be recovered by taking the encrypted output and register index and feeding it into the system.
 
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Optionally, add a testbench to the `test` folder. See [test/README.md](test/README.md) for more information.
+## External hardware
 
-The GitHub action will automatically build the ASIC files using [OpenLane](https://www.zerotoasiccourse.com/terminology/openlane/).
-
-## Enable GitHub actions to build the results page
-
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
-
-## Resources
-
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://docs.google.com/document/d/1aUUZ1jthRpg4QURIIyzlOaPWlmQzr-jBn3wZipVUPt4)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@matthewvenn](https://twitter.com/matthewvenn)
+External hardware with basic memory, wiring, and data displaying functionality should be suitable to test this chip. Verilog testing was performed by using one external register for data output, one external register for index output, and a means to read the data from the registers. Basic binary instrumentation may be needed if direct access to wires is not possible in order to shift the register index from the output bits of 6 through 4 to the input bits of 3 through 1.
