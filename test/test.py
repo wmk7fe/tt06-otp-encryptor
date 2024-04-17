@@ -35,7 +35,7 @@ async def print_io(dut):
     dut._log.info(f'\n\tclk: {clk.value}\n\tena: {ena.value}\n\tdecrypt: {dut.uio_in.value & 0x1}\n\trnum: {(dut.uio_in.value>>1)&0x7}\n\tin: {data_in.value}\n\tout: {data_out.value}\n\trnum_out: {(dut.uio_out.value >> 4) & 0x7}\n')
 
 @cocotb.test()
-async def test_otp_encryptor(dut):
+async def test_otp_encryptor_vary_registers(dut):
     clk = dut.clk
     ena = dut.ena
     data_in = dut.ui_in
@@ -101,10 +101,9 @@ async def test_otp_encryptor(dut):
     dut._log.info("Decrypt stored ciphertexts associated with each register")
 
     dut._log.info("\t1st Register")
-    data_in.value = ct2
-    rnum_decrypt_in.value = (r2 << 1) + 1
+    data_in.value = ct0
+    rnum_decrypt_in.value = (r0 << 1) + 1
     await wait_x_cycles(clk, 5)
-    await print_io(dut)
     await print_io(dut)
     assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r0)"
 
@@ -116,9 +115,66 @@ async def test_otp_encryptor(dut):
     assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r1)"
 
     dut._log.info("\t3rd Register")
-    data_in.value = ct0
-    rnum_decrypt_in.value = (r0 << 1) + 1
+    data_in.value = ct2
+    rnum_decrypt_in.value = (r2 << 1) + 1
     await wait_x_cycles(clk, 5)
     await print_io(dut)
     assert data_out.value == 0xab, f"Decryption failed: expected 0xab, got {data_out.value} (r2)"
+
+
+@cocotb.test()
+async def test_otp_encryptor_large_num_set(dut):
+    clk = dut.clk
+    ena = dut.ena
+    data_in = dut.ui_in
+    data_out = dut.uo_out
+    rnum_decrypt_in = dut.uio_in
+    rnum_out = dut.uio_out
+    rst_n = dut.rst_n
+    
+  
+    dut._log.info("Start")
+    # Reset
+    dut._log.info("Reset")
+    await clock_rise(clk)
+    await clock_fall(clk)
+    await clock_rise(clk)
+    ena.value = 0
+    rst_n.value = 1
+    data_in.value = 0
+    rnum_decrypt_in.value = 0
+    await clock_rise(clk)
+    await clock_fall(clk)
+    rst_n.value = 0
+    await clock_rise(clk)
+    await clock_fall(clk)
+    rst_n.value = 1
+    ena.value = 1
+    dut._log.info(f'out: {data_out.value}\n\tuio_out: {dut.uio_out.value}\n')
+
+    await clock_rise(clk)
+    await clock_fall(clk)
+    await clock_rise(clk)
+    await clock_fall(clk)
+
+    # Encrypt
+    dut._log.info("Encrypt numbers 50 to 119")
+
+    for i in range(80):
+    
+        data_in.value = i + 50
+        rnum_decrypt_in.value = 0x00
+    
+        await clock_rise(clk)
+        await clock_fall(clk)
+        await print_io(dut)
+        ct = data_out.value
+        r = (dut.uio_out.value >> 4) & 0x7
+    
+        data_in.value = ct
+        rnum_decrypt_in.value = (r << 1) + 1
+        await wait_x_cycles(clk, 5)
+        await print_io(dut)
+        assert data_out.value == i + 50, f"Decryption failed: expected {i + 50}, got {data_out.value} (r{r}))"
+    
 
