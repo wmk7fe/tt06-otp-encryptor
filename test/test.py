@@ -66,33 +66,27 @@ async def test_otp_encryptor_vary_registers(dut):
 
     # Encrypt
     dut._log.info("Encrypt 0xab - store to three different registers")
-    await clock_rise(clk)
-    await clock_fall(clk)
-    await clock_rise(clk)
-    await clock_fall(clk)
+    await wait_x_cycles(clk, 3)
 
     data_in.value = 0xab
     rnum_decrypt_in.value = 0x00
 
     dut._log.info("\t1st Register")
-    await clock_rise(clk)
-    await clock_fall(clk)
+    await wait_x_cycles(clk, 3)
     await print_io(dut)
     ct0 = data_out.value
     r0 = (dut.uio_out.value >> 4) & 0x7
     assert ct0 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     dut._log.info("\t2nd Register")
-    await clock_rise(clk)
-    await clock_fall(clk)
+    await wait_x_cycles(clk, 3)
     await print_io(dut)
     ct1 = data_out.value
     r1 = (dut.uio_out.value >> 4) & 0x7
     assert ct1 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     dut._log.info("\t3rd Register")
-    await clock_rise(clk)
-    await clock_fall(clk)
+    await wait_x_cycles(clk, 3)
     await print_io(dut)
     ct2 = data_out.value
     r2 = (dut.uio_out.value >> 4) & 0x7
@@ -165,8 +159,7 @@ async def test_otp_encryptor_large_num_set(dut):
         data_in.value = i + 50
         rnum_decrypt_in.value = 0x00
     
-        await clock_rise(clk)
-        await clock_fall(clk)
+        await wait_x_cycles(clk, 3)
         await print_io(dut)
         ct = data_out.value
         r = (dut.uio_out.value >> 4) & 0x7
