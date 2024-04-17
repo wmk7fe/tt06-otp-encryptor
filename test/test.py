@@ -62,6 +62,8 @@ async def test_otp_encryptor_vary_registers(dut):
     await clock_fall(clk)
     rst_n.value = 1
     ena.value = 1
+    await clock_rise(clk)
+    await clock_fall(clk)
     dut._log.info(f'out: {data_out.value}\n\tuio_out: {dut.uio_out.value}\n')
 
     # Encrypt
