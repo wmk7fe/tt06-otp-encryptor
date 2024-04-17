@@ -30,10 +30,10 @@ assign reset = ~rst_n;
 
 assign uo_out[7:0] = out[7:0];
 assign uio_out[6:4] = index_out[2:0];
+	
 assign uio_out[7] = 1'b0;
-
+assign uio_out[3:0] = 4'h0;
 assign uio_oe = 8'b11110000;
-assign uio_out[3:0] = uio_in[3:0];
 
 // registers	
 reg[7:0] mem[0:7];
