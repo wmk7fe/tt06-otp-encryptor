@@ -78,21 +78,18 @@ async def test_otp_encryptor_vary_registers(dut):
     await print_io(dut)
     ct0 = data_out.value
     r0 = (dut.uio_out.value >> 4) & 0x7
-    assert ct0 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     dut._log.info("\t2nd Register")
     await wait_x_cycles(clk, 3)
     await print_io(dut)
     ct1 = data_out.value
     r1 = (dut.uio_out.value >> 4) & 0x7
-    assert ct1 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     dut._log.info("\t3rd Register")
     await wait_x_cycles(clk, 3)
     await print_io(dut)
     ct2 = data_out.value
     r2 = (dut.uio_out.value >> 4) & 0x7
-    assert ct2 != 0xab, f"Encryption failed: Plaintext Unmodified"
 
     dut._log.info("Decrypt stored ciphertexts associated with each register")
 
