@@ -1,6 +1,6 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg)
 
-# Tiny Tapeout Verilog Project Template
+# Tiny Tapeout - One Time Pad Encryptor and Decryptor
 
 This is the one time pad encryptor submission for the Tiny Tapeout 06 Shuttle. The top level file is in src/tt_um_otp_encryptor.v, which includes a module from the file LFSR_PRNG.v in the design. Testing of this design is performed from the file test/test.py with encryptions and decryptions of different values as well as encryptions and decryptions of pads stored in different registers. More information on how the logic works and how to test is shown below.
 
